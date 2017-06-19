@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <SurfaceView
+        android:id="@+id/previewSV"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="#90404040"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <View
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:background="#90404040"/>
+            <ImageView
+                android:id="@+id/dgonlam_camera_iv_shadePic"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="@drawable/dgonlam_ic_idcard_person"/>
+            <View
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:background="#90404040"/>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="#90404040"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/dgonlam_camera_iv_flash"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|right"
+        android:layout_margin="20dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/shape_r50_black"
+        android:padding="10dp"
+        android:src="@drawable/dgonlam_ic_flash_white_128" />
+
+    <ImageView
+        android:id="@+id/dgonlam_camera_iv_takePhoto"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/dgonlam_ic_camera_white_72" />
+
+</android.support.design.widget.CoordinatorLayout>
