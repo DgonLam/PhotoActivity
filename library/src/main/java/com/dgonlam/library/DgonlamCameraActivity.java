@@ -67,6 +67,12 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
         mySurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mPhotoImgBtn = (ImageView) findViewById(R.id.dgonlam_camera_iv_takePhoto);
         mPhotoImgBtn.setOnClickListener(new PhotoOnClickListener());
+        findViewById(R.id.dgonlam_camera_tv_cancel).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void initParams() {
