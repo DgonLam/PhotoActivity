@@ -1,4 +1,5 @@
 package com.dgonlam.library;
+
 /**
  * Created by DgonLam on 2017/10/19.
  */
@@ -44,9 +45,8 @@ public class SensorControler implements SensorEventListener {
     private int foucsing = 1;  //1 表示没有被锁定 0表示被锁定
     private Context mContext;
 
-    private SensorControler(Context context,SensorFocusListener listener) {
+    private SensorControler(Context context) {
         mContext = context;
-        this.sensorFocusListener = listener;
         mSensorManager = (SensorManager) mContext.getApplicationContext().getSystemService(Activity.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);// TYPE_GRAVITY
         restParams();
@@ -55,11 +55,15 @@ public class SensorControler implements SensorEventListener {
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    public static SensorControler getInstance(Context context,SensorFocusListener listener) {
+    public static SensorControler getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new SensorControler(context,listener);
+            mInstance = new SensorControler(context);
         }
         return mInstance;
+    }
+
+    public void setSensorFocusListener(SensorFocusListener listener){
+        this.sensorFocusListener = listener;
     }
 
     public void setCameraFocusListener(CameraFocusListener mCameraFocusListener) {

@@ -262,7 +262,7 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
                 }
             }
         });
-        SensorControler.getInstance(this, new SensorFocusListener() {
+        SensorControler.getInstance(this).setSensorFocusListener(new SensorFocusListener() {
             @Override
             public void onFocusChanged() {
                 Log.d("long","sesor changed");
@@ -297,6 +297,31 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
             myCamera.cancelAutoFocus();
             isPreview = true;
         }
+        initFocus();
+    }
+
+    private void initFocus(){
+        Rect focusRect = new Rect(-594,374,-294,674);
+        Rect meteringRect = new Rect(-669,299,-219,749);
+
+        Camera.Parameters parameters = myCamera.getParameters();
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+
+        if (parameters.getMaxNumFocusAreas() > 0) {
+            List<Camera.Area> focusAreas = new ArrayList<Camera.Area>();
+            focusAreas.add(new Camera.Area(focusRect, 1000));
+
+            parameters.setFocusAreas(focusAreas);
+        }
+
+        if (parameters.getMaxNumMeteringAreas() > 0) {
+            List<Camera.Area> meteringAreas = new ArrayList<Camera.Area>();
+            meteringAreas.add(new Camera.Area(meteringRect, 1000));
+
+            parameters.setMeteringAreas(meteringAreas);
+        }
+        myCamera.setParameters(parameters);
+        myCamera.autoFocus(null);
     }
 
     /*为了实现拍照的快门声音及拍照保存照片需要下面三个回调变量*/
@@ -384,6 +409,11 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
 
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        SensorControler.getInstance(this).onStop();
+    }
 
     @Override
     public void onBackPressed()
