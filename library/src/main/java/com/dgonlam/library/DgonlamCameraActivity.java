@@ -1,4 +1,4 @@
-package com.dgonlam.library;
+package com.dgonlam.myapplication;
 
 
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
@@ -13,6 +14,8 @@ import android.hardware.Camera.ShutterCallback;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -25,6 +28,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
@@ -73,13 +77,51 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
                 finish();
             }
         });
+        findViewById(R.id.dgonlam_camera_iv_shadePic).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Rect focusRect = DgonlamDensiityUtil.calculateTapArea(myCamera, event.getRawX(), event.getRawY(), 1f);
+                Rect meteringRect = DgonlamDensiityUtil.calculateTapArea(myCamera,event.getRawX(), event.getRawY(), 1.5f);
+
+                Camera.Parameters parameters = myCamera.getParameters();
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                if (focusRect.isEmpty()){
+                    focusRect.bottom = 674;
+                    focusRect.left =-594;
+                    focusRect.top = 374;
+                    focusRect.right=-294;
+                }
+                if (meteringRect.isEmpty()){
+                    meteringRect.bottom = 749;
+                    meteringRect.left =-669;
+                    meteringRect.top = 299;
+                    meteringRect.right=-219;
+                }
+
+                if (parameters.getMaxNumFocusAreas() > 0) {
+                    List<Camera.Area> focusAreas = new ArrayList<Camera.Area>();
+                    focusAreas.add(new Camera.Area(focusRect, 1000));
+
+                    parameters.setFocusAreas(focusAreas);
+                }
+
+                if (parameters.getMaxNumMeteringAreas() > 0) {
+                    List<Camera.Area> meteringAreas = new ArrayList<Camera.Area>();
+                    meteringAreas.add(new Camera.Area(meteringRect, 1000));
+
+                    parameters.setMeteringAreas(meteringAreas);
+                }
+                myCamera.setParameters(parameters);
+                myCamera.autoFocus(null);
+                return true;
+            }
+        });
     }
 
     private void initParams() {
         String strResult = checkParams();
         if (strResult.equals("")) {
             filePath = getIntent().getExtras().getString(strFilePath);
-
             if (getIntent().getExtras().getString(mode).equals(mode_idCard)) {
                 if (getIntent().getExtras().getString(mode_idCard).equals(mode_idCard_person)){
 
@@ -114,6 +156,17 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
     // 当SurfaceView/预览界面的格式和大小发生改变时，该方法被调用
     {
+        //使用最佳比例配置重启相机
+        try {
+            myCamera.setPreviewDisplay(mySurfaceHolder);
+            final Camera.Parameters parameters = myCamera.getParameters();
+            final Camera.Size size = getBestPreviewSize(width, height);
+            parameters.setPreviewSize(size.width, size.height);
+            myCamera.setParameters(parameters);
+            myCamera.startPreview();
+        } catch (Exception e) {
+
+        }
         // TODO Auto-generated method stub
         myCamera.autoFocus(new AutoFocusCallback() {
             @Override
@@ -124,6 +177,28 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
                 }
             }
         });
+    }
+
+    private Camera.Size getBestPreviewSize(int width, int height) {
+        Camera.Size result = null;
+        final Camera.Parameters p = myCamera.getParameters();
+        //特别注意此处需要规定rate的比是大的比小的，不然有可能出现rate = height/width，但是后面遍历的时候，current_rate = width/height,所以我们限定都为大的比小的。
+        float rate = (float) Math.max(width, height)/ (float)Math.min(width, height);
+        float tmp_diff;
+        float min_diff = -1f;
+        for (Camera.Size size : p.getSupportedPreviewSizes()) {
+            float current_rate = (float) Math.max(size.width, size.height)/ (float)Math.min(size.width, size.height);
+            tmp_diff = Math.abs(current_rate-rate);
+            if( min_diff < 0){
+                min_diff = tmp_diff ;
+                result = size;
+            }
+            if( tmp_diff < min_diff ){
+                min_diff = tmp_diff ;
+                result = size;
+            }
+        }
+        return result;
     }
 
     @Override
@@ -185,6 +260,13 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
                         camera.setParameters(myParam);
                     }
                 }
+            }
+        });
+        SensorControler.getInstance(this, new SensorFocusListener() {
+            @Override
+            public void onFocusChanged() {
+                Log.d("long","sesor changed");
+                doAutoFoces();
             }
         });
     }
