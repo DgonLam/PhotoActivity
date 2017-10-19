@@ -1,4 +1,4 @@
-package com.dgonlam.myapplication;
+package com.dgonlam.library;
 
 import android.app.Activity;
 import android.content.Context;
