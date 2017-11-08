@@ -7,7 +7,9 @@
     <uses-feature android:name="android.hardware.camera.autofocus"/>
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
     <application>
-        <activity android:name=".DgonlamCameraActivity" />
+        <activity android:name=".DgonlamCameraActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>
