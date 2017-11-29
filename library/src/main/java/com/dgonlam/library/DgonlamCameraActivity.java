@@ -284,7 +284,7 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
             myParam.setPictureFormat(PixelFormat.JPEG);//设置拍照后存储的图片格式
 
             //设置大小和方向等参数
-            myParam.setPictureSize(1920, 1080);
+           // myParam.setPictureSize(1920, 1080);
             myCamera.setDisplayOrientation(90);
 //            myParam.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             if (!Build.MODEL.equals("KORIDY H30")) {
