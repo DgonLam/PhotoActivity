@@ -265,7 +265,7 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
         SensorControler.getInstance(this).setSensorFocusListener(new SensorFocusListener() {
             @Override
             public void onFocusChanged() {
-                Log.d("long","sesor changed");
+                Log.d("long", "sesor changed");
                 doAutoFoces();
             }
         });
@@ -284,7 +284,15 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
             myParam.setPictureFormat(PixelFormat.JPEG);//设置拍照后存储的图片格式
 
             //设置大小和方向等参数
-           // myParam.setPictureSize(1920, 1080);
+            List<Camera.Size> supportedPictureSizes = myParam.getSupportedPictureSizes();
+            int index = 0;
+            for (int i = 0 ;i<supportedPictureSizes.size();i++){
+                if (supportedPictureSizes.get(i).width > supportedPictureSizes.get(index).width) {
+                    index = i;
+                }
+            }
+            myParam.setPictureSize( Math.max(supportedPictureSizes.get(index).height,supportedPictureSizes.get(index).width),
+                    Math.min(supportedPictureSizes.get(index).height,supportedPictureSizes.get(index).width));
             myCamera.setDisplayOrientation(90);
 //            myParam.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             if (!Build.MODEL.equals("KORIDY H30")) {
