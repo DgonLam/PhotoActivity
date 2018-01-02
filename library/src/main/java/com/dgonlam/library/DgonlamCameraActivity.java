@@ -371,6 +371,8 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
             if (null != rotaBitmap) {
                 onSuccess(rotaBitmap);
             }
+			
+			rotaBitmap.recycle();
 
             //再次进入预览
             myCamera.startPreview();
@@ -401,12 +403,15 @@ public class DgonlamCameraActivity extends AppCompatActivity implements SurfaceH
             BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream);
             Bitmap cutBitmap = Bitmap.createBitmap(bm, dgonlamDensiityUtil.dp2px(this, 20), dgonlamDensiityUtil.dp2px(this, 20), bm.getWidth() - dgonlamDensiityUtil.dp2px(this, 40)
                     , bm.getHeight() - dgonlamDensiityUtil.dp2px(this, 100));
+			bm.recycle();
             Matrix matrix = new Matrix();
             matrix.postRotate(-90);
             Bitmap roateBitmap = Bitmap.createBitmap(cutBitmap, 0, 0, cutBitmap.getWidth(), cutBitmap.getHeight(), matrix, false);
+			cutBitmap.recycle();
             roateBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             bos.flush();
             bos.close();
+			roateBitmap.recycle();
             Intent intent = new Intent();
             setResult(RESULT_OK, intent);
             finish();
